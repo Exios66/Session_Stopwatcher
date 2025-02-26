@@ -67,4 +67,4 @@ CSV files are saved to the user's Downloads folder with the naming format:
 
 ## Integration with Manifest Generator
 
-This module complements the Manifest Generator by providing real-time data collection capability during experimental sessions. Consider using the Manifest Generator to collect participant metadata before starting a recording session. 
+This module complements the Manifest Generator by providing real-time data collection capability during experimental sessions. Consider using the Manifest Generator to collect participant metadata before starting a recording session.
