@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comprehensive Stopwatch App</title>
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    
+    body {
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    button {
+      cursor: pointer;
+      border: none;
+      outline: none;
+    }
+    
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    
+    select {
+      cursor: pointer;
+    }
+    
+    /* Layout */
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    .panel {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .title {
+      font-size: 24px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+    }
+    
+    .title-icon {
+      margin-right: 10px;
+    }
+    
+    /* Timer display */
+    .timer-display {
+      text-align: center;
+      margin: 32px 0;
+    }
+    
+    .time {
+      font-size: 48px;
+      font-family: monospace;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    
+    .hint {
+      color: #666;
+      font-size: 14px;
+    }
+    
+    /* Buttons */
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+    
+    .btn-start {
+      background-color: #22c55e;
+      color: white;
+    }
+    
+    .btn-start:hover {
+      background-color: #16a34a;
+    }
+    
+    .btn-stop {
+      background-color: #ef4444;
+      color: white;
+    }
+    
+    .btn-stop:hover {
+      background-color: #dc2626;
+    }
+    
+    .btn-lap {
+      background-color: #3b82f6;
+      color: white;
+    }
+    
+    .btn-lap:hover {
+      background-color: #2563eb;
+    }
+    
+    .btn-reset {
+      background-color: #6b7280;
+      color: white;
+    }
+    
+    .btn-reset:hover {
+      background-color: #4b5563;
+    }
+    
+    .btn-export {
+      background-color: #8b5cf6;
+      color: white;
+    }
+    
+    .btn-export:hover {
+      background-color: #7c3aed;
+    }
+    
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+    }
+    
+    .btn-icon svg {
+      margin-right: 8px;
+    }
+    
+    .btn-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #e0e7ff;
+      color: #4f46e5;
+    }
+    
+    .btn-circle:hover {
+      background-color: #c7d2fe;
+    }
+    
+    /* Session selector */
+    .session-controls {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .session-select {
+      padding: 4px 8px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    /* Tables */
+    .table-container {
+      overflow-y: auto;
+      max-height: 160px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th {
+      text-align: left;
+      color: #6b7280;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 4px;
+    }
+    
+    td {
+      padding: 8px 4px;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .empty-message {
+      text-align: center;
+      color: #9ca3af;
+      padding: 16px;
+    }
+    
+    /* Badges */
+    .badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .badge-start {
+      background-color: #dcfce7;
+      color: #166534;
+    }
+    
+    .badge-stop {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .badge-lap {
+      background-color: #dbeafe;
+      color: #1e40af;
+    }
+    
+    .badge-mark {
+      background-color: #f3f4f6;
+      color: #374151;
+    }
+    
+    /* Export panel */
+    .export-data {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .export-content {
+      flex-grow: 1;
+      overflow: auto;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+      background-color: #f9fafb;
+      padding: 8px;
+      margin-bottom: 16px;
+    }
+    
+    pre {
+      font-family: monospace;
+      font-size: 12px;
+      white-space: pre-wrap;
+    }
+    
+    /* Footer */
+    .footer {
+      margin-top: auto;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="app">
+    <header class="header">
+      <h1 class="title">
+        <span class="title-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </span>
+        Comprehensive Stopwatch
+      </h1>
+    </header>
+
+    <div id="main-content">
+      <div class="panel">
+        <div class="header">
+          <div class="session-name" id="active-session-name">Session 1</div>
+          <div class="session-controls">
+            <button class="btn-circle" id="add-session-btn" title="Add new session">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+            <select id="session-select" class="session-select">
+              <option value="1">Session 1</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="timer-display">
+          <div class="time" id="time-display">00:00:00.00</div>
+          <div class="hint">Press spacebar or enter to mark time</div>
+        </div>
+        
+        <div class="button-group">
+          <button id="toggle-btn" class="btn btn-start">Start</button>
+          <button id="lap-btn" class="btn btn-lap" disabled>Lap</button>
+          <button id="reset-btn" class="btn btn-reset">Reset</button>
+        </div>
+      </div>
+      
+      <div class="panel">
+        <div class="header">
+          <h2 class="title" style="font-size: 18px;">
+            <span class="title-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 2L12 13"></path>
+                <path d="M22 2L15 22L12 13L2 9L22 2Z"></path>
+              </svg>
+            </span>
+            Laps
+          </h2>
+        </div>
+        <div id="laps-container" class="table-container">
+          <div class="empty-message">No laps recorded yet</div>
+        </div>
+      </div>
+      
+      <div class="panel">
+        <div class="header">
+          <h2 class="title" style="font-size: 18px;">
+            <span class="title-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+            </span>
+            Time Entries
+          </h2>
+        </div>
+        <div id="entries-container" class="table-container">
+          <div class="empty-message">No time entries recorded yet</div>
+        </div>
+      </div>
+      
+      <div class="footer">
+        <button id="export-btn" class="btn btn-export btn-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Export Data
+        </button>
+      </div>
+    </div>
+    
+    <div id="export-panel" class="panel export-data" style="display: none;">
+      <div class="header">
+        <h2 class="title" style="font-size: 18px;">Export Data</h2>
+        <div class="session-controls">
+          <select id="format-select" class="session-select">
+            <option value="json">JSON</option>
+            <option value="csv">CSV</option>
+          </select>
+          <button id="back-btn" class="btn" style="padding: 4px 8px; background-color: #e5e7eb;">Back</button>
+        </div>
+      </div>
+      
+      <div class="export-content">
+        <pre id="export-content"></pre>
+      </div>
+      
+      <div class="footer">
+        <button id="download-btn" class="btn btn-start btn-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Download <span id="format-text">JSON</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // State management
+      let sessions = [
+        { 
+          id: 1, 
+          name: "Session 1", 
+          isRunning: false, 
+          startTime: null, 
+          elapsed: 0, 
+          laps: [], 
+          entries: [] 
+        }
+      ];
+      let activeSessionId = 1;
+      let showExport = false;
+      let exportFormat = 'json';
+      let intervalId = null;
+      let lastTick = null;
+      
+      // DOM elements
+      const timeDisplay = document.getElementById('time-display');
+      const sessionNameDisplay = document.getElementById('active-session-name');
+      const sessionSelect = document.getElementById('session-select');
+      const toggleBtn = document.getElementById('toggle-btn');
+      const lapBtn = document.getElementById('lap-btn');
+      const resetBtn = document.getElementById('reset-btn');
+      const addSessionBtn = document.getElementById('add-session-btn');
+      const exportBtn = document.getElementById('export-btn');
+      const formatSelect = document.getElementById('format-select');
+      const backBtn = document.getElementById('back-btn');
+      const downloadBtn = document.getElementById('download-btn');
+      const formatText = document.getElementById('format-text');
+      const exportContent = document.getElementById('export-content');
+      const mainContent = document.getElementById('main-content');
+      const exportPanel = document.getElementById('export-panel');
+      const lapsContainer = document.getElementById('laps-container');
+      const entriesContainer = document.getElementById('entries-container');
+      
+      // Event listeners
+      toggleBtn.addEventListener('click', () => toggleTimer(activeSessionId));
+      lapBtn.addEventListener('click', addLap);
+      resetBtn.addEventListener('click', resetSession);
+      addSessionBtn.addEventListener('click', addNewSession);
+      exportBtn.addEventListener('click', exportSessions);
+      backBtn.addEventListener('click', () => toggleExportView(false));
+      downloadBtn.addEventListener('click', downloadExport);
+      sessionSelect.addEventListener('change', (e) => {
+        activeSessionId = Number(e.target.value);
+        updateUI();
+      });
+      formatSelect.addEventListener('change', (e) => {
+        exportFormat = e.target.value;
+        formatText.textContent = exportFormat.toUpperCase();
+        exportSessions();
+      });
+      document.addEventListener('keydown', (e) => {
+        if ((e.key === ' ' || e.key === 'Enter') && !showExport) {
+          e.preventDefault();
+          markTime();
+        }
+      });
+      
+      // Helper functions
+      function formatTime(ms) {
+        const totalSeconds = Math.floor(ms / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        const milliseconds = Math.floor((ms % 1000) / 10);
+    
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(milliseconds).padStart(2, '0')}`;
+      }
+      
+      function getFullTimestamp() {
+        const now = new Date();
+        return {
+          raw: now,
+          formatted: now.toISOString(),
+          date: now.toLocaleDateString(),
+          time: now.toLocaleTimeString(),
+          hour: now.getHours(),
+          minute: now.getMinutes(),
+          second: now.getSeconds(),
+          millisecond: now.getMilliseconds()
+        };
+      }
+      
+      // Main functions
+      function toggleTimer(sessionId) {
+        const sessionIndex = sessions.findIndex(s => s.id === sessionId);
+        if (sessionIndex === -1) return;
+        
+        const session = sessions[sessionIndex];
+        
+        if (!session.isRunning) {
+          // Start the timer
+          const timestamp = getFullTimestamp();
+          sessions[sessionIndex] = { 
+            ...session, 
+            isRunning: true, 
+            startTime: session.startTime || timestamp,
+            entries: [...session.entries, {
+              type: 'start',
+              timestamp,
+              elapsedAtMark: session.elapsed
+            }]
+          };
+          
+          // Start the interval if not already running
+          if (intervalId === null) {
+            lastTick = Date.now();
+            intervalId = setInterval(updateTimers, 10);
+          }
+        } else {
+          // Stop the timer
+          const timestamp = getFullTimestamp();
+          sessions[sessionIndex] = { 
+            ...session, 
+            isRunning: false,
+            entries: [...session.entries, {
+              type: 'stop',
+              timestamp,
+              elapsedAtMark: session.elapsed
+            }]
+          };
+          
+          // Stop the interval if no session is running
+          if (!sessions.some(s => s.isRunning) && intervalId !== null) {
+            clearInterval(intervalId);
+            intervalId = null;
+          }
+        }
+        
+        updateUI();
+      }
+      
+      function updateTimers() {
+        const now = Date.now();
+        const delta = now - lastTick;
+        lastTick = now;
+        
+        let anyRunning = false;
+        
+        sessions = sessions.map(session => {
+          if (session.isRunning) {
+            anyRunning = true;
+            return { ...session, elapsed: session.elapsed + delta };
+          }
+          return session;
+        });
+        
+        if (!anyRunning && intervalId !== null) {
+          clearInterval(intervalId);
+          intervalId = null;
+        }
+        
+        updateTimeDisplay();
+      }
+      
+      function markTime() {
+        const sessionIndex = sessions.findIndex(s => s.id === activeSessionId);
+        if (sessionIndex === -1) return;
+        
+        const session = sessions[sessionIndex];
+        const timestamp = getFullTimestamp();
+        
+        sessions[sessionIndex] = { 
+          ...session, 
+          entries: [...session.entries, {
+            type: 'mark',
+            timestamp,
+            elapsedAtMark: session.elapsed
+          }]
+        };
+        
+        updateUI();
+      }
+      
+      function addLap() {
+        const sessionIndex = sessions.findIndex(s => s.id === activeSessionId);
+        if (sessionIndex === -1) return;
+        
+        const session = sessions[sessionIndex];
+        if (!session.isRunning) return;
+        
+        const timestamp = getFullTimestamp();
+        const lastLapTime = session.laps.length > 0 
+          ? session.laps[session.laps.length - 1].cumulativeTime 
+          : 0;
+        
+        const lapTime = session.elapsed - lastLapTime;
+        
+        sessions[sessionIndex] = { 
+          ...session, 
+          laps: [...session.laps, {
+            number: session.laps.length + 1,
+            time: lapTime,
+            cumulativeTime: session.elapsed,
+            timestamp
+          }],
+          entries: [...session.entries, {
+            type: 'lap',
+            timestamp,
+            elapsedAtMark: session.elapsed,
+            lapNumber: session.laps.length + 1,
+            lapTime
+          }]
+        };
+        
+        updateUI();
+      }
+      
+      function resetSession() {
+        const sessionIndex = sessions.findIndex(s => s.id === activeSessionId);
+        if (sessionIndex === -1) return;
+        
+        const session = sessions[sessionIndex];
+        if (session.isRunning) return;
+        
+        sessions[sessionIndex] = { 
+          ...session, 
+          isRunning: false, 
+          elapsed: 0, 
+          startTime: null,
+          laps: [],
+          entries: []
+        };
+        
+        updateUI();
+      }
+      
+      function addNewSession() {
+        const newId = Math.max(...sessions.map(s => s.id)) + 1;
+        sessions.push({
+          id: newId,
+          name: `Session ${newId}`,
+          isRunning: false,
+          startTime: null,
+          elapsed: 0,
+          laps: [],
+          entries: []
+        });
+        
+        activeSessionId = newId;
+        updateUI();
+        
+        // Add the new option to the select element
+        const option = document.createElement('option');
+        option.value = newId;
+        option.textContent = `Session ${newId}`;
+        sessionSelect.appendChild(option);
+        sessionSelect.value = newId;
+      }
+      
+      function exportSessions() {
+        let dataToExport;
+        
+        const exportableSessions = sessions.map(session => {
+          const { id, name, elapsed, laps, entries } = session;
+          return {
+            id,
+            name,
+            totalDuration: elapsed,
+            totalDurationFormatted: formatTime(elapsed),
+            laps: laps.map(lap => ({
+              number: lap.number,
+              time: lap.time,
+              timeFormatted: formatTime(lap.time),
+              cumulativeTime: lap.cumulativeTime,
+              cumulativeTimeFormatted: formatTime(lap.cumulativeTime),
+              timestamp: lap.timestamp
+            })),
+            entries: entries.map(entry => ({
+              type: entry.type,
+              timestamp: entry.timestamp,
+              elapsedAtMark: entry.elapsedAtMark,
+              elapsedAtMarkFormatted: formatTime(entry.elapsedAtMark),
+              ...(entry.type === 'lap' ? {
+                lapNumber: entry.lapNumber,
+                lapTime: entry.lapTime,
+                lapTimeFormatted: formatTime(entry.lapTime)
+              } : {})
+            }))
+          };
+        });
+        
+        if (exportFormat === 'json') {
+          dataToExport = JSON.stringify(exportableSessions, null, 2);
+        } else if (exportFormat === 'csv') {
+          // Flattened CSV format with one entry per row
+          const headers = ['session_id', 'session_name', 'entry_type', 'timestamp', 'elapsed_time', 'lap_number', 'lap_time'];
+          const rows = exportableSessions.flatMap(session => {
+            return session.entries.map(entry => {
+              return [
+                session.id,
+                session.name,
+                entry.type,
+                entry.timestamp.formatted,
+                formatTime(entry.elapsedAtMark),
+                entry.type === 'lap' ? entry.lapNumber : '',
+                entry.type === 'lap' ? formatTime(entry.lapTime) : ''
+              ].join(',');
+            });
+          });
+          dataToExport = [headers.join(','), ...rows].join('\n');
+        }
+        
+        exportContent.textContent = dataToExport;
+        toggleExportView(true);
+      }
+      
+      function downloadExport() {
+        const blob = new Blob([exportContent.textContent], { 
+          type: exportFormat === 'json' ? 'application/json' : 'text/csv' 
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `stopwatch-export.${exportFormat}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+      
+      function toggleExportView(show) {
+        showExport = show;
+        if (show) {
+          mainContent.style.display = 'none';
+          exportPanel.style.display = 'flex';
+        } else {
+          mainContent.style.display = 'block';
+          exportPanel.style.display = 'none';
+        }
+      }
+      
+      // UI update functions
+      function updateTimeDisplay() {
+        const activeSession = sessions.find(s => s.id === activeSessionId);
+        if (activeSession) {
+          timeDisplay.textContent = formatTime(activeSession.elapsed);
+        }
+      }
+      
+      function updateLapsTable() {
+        const activeSession = sessions.find(s => s.id === activeSessionId);
+        if (!activeSession) return;
+        
+        if (activeSession.laps.length === 0) {
+          lapsContainer.innerHTML = '<div class="empty-message">No laps recorded yet</div>';
+          return;
+        }
+        
+        let html = `
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Lap Time</th>
+                <th>Total Time</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        
+        // Reverse the laps to show newest first
+        const reversedLaps = [...activeSession.laps].reverse();
+        
+        for (const lap of reversedLaps) {
+          html += `
+            <tr>
+              <td>${lap.number}</td>
+              <td style="font-family: monospace;">${formatTime(lap.time)}</td>
+              <td style="font-family: monospace;">${formatTime(lap.cumulativeTime)}</td>
+            </tr>
+          `;
+        }
+        
+        html += `
+            </tbody>
+          </table>
+        `;
+        
+        lapsContainer.innerHTML = html;
+      }
+      
+      function updateEntriesTable() {
+        const activeSession = sessions.find(s => s.id === activeSessionId);
+        if (!activeSession) return;
+        
+        if (activeSession.entries.length === 0) {
+          entriesContainer.innerHTML = '<div class="empty-message">No time entries recorded yet</div>';
+          return;
+        }
+        
+        let html = `
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Time</th>
+                <th>Elapsed</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        
+        // Reverse the entries to show newest first
+        const reversedEntries = [...activeSession.entries].reverse();
+        
+        for (const entry of reversedEntries) {
+          let badgeClass = 'badge-mark';
+          let typeText = 'mark';
+          
+          if (entry.type === 'start') {
+            badgeClass = 'badge-start';
+            typeText = 'start';
+          } else if (entry.type === 'stop') {
+            badgeClass = 'badge-stop';
+            typeText = 'stop';
+          } else if (entry.type === 'lap') {
+            badgeClass = 'badge-lap';
+            typeText = `Lap ${entry.lapNumber}`;
+          }
+          
+          html += `
+            <tr>
+              <td><span class="badge ${badgeClass}">${typeText}</span></td>
+              <td style="font-size: 14px;">${entry.timestamp.time}</td>
+              <td style="font-family: monospace;">${formatTime(entry.elapsedAtMark)}</td>
+            </tr>
+          `;
+        }
+        
+        html += `
+            </tbody>
+          </table>
+        `;
+        
+        entriesContainer.innerHTML = html;
+      }
+      
+      function updateSessionControls() {
+        const activeSession = sessions.find(s => s.id === activeSessionId);
+        if (!activeSession) return;
+        
+        sessionNameDisplay.textContent = activeSession.name;
+        
+        // Update toggle button and control states
+        if (activeSession.isRunning) {
+          toggleBtn.textContent = 'Stop';
+          toggleBtn.classList.remove('btn-start');
+          toggleBtn.classList.add('btn-stop');
+          lapBtn.disabled = false;
+          resetBtn.disabled = true;
+        } else {
+          toggleBtn.textContent = 'Start';
+          toggleBtn.classList.remove('btn-stop');
+          toggleBtn.classList.add('btn-start');
+          lapBtn.disabled = true;
+          resetBtn.disabled = false;
+        }
+      }
+      
+      function updateUI() {
+        updateTimeDisplay();
+        updateLapsTable();
+        updateEntriesTable();
+        updateSessionControls();
+      }
+      
+      // Initial UI update
+      updateUI();
+    });
+  </script>
+</body>
+</html>
