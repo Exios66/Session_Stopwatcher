@@ -13,9 +13,8 @@ This module provides functionality to record precise timestamps during research 
 
 ## Requirements
 
-- Python 3.x
+- Python 3.x (with tkinter, which is included in standard Python installations)
 - pynput library for keyboard input handling
-- tkinter for GUI dialogs (included in standard Python installation)
 
 ## Installation
 

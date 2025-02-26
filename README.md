@@ -103,6 +103,7 @@ python session_recorder.py
 ```
 
 When the application starts:
+
 - Press Enter or 'e' to record a timestamp
 - The first timestamp will prompt you to enter a participant ID
 - After each timestamp, you can add optional notes
