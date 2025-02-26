@@ -21,23 +21,25 @@ This module provides functionality to record precise timestamps during research 
 1. Ensure you have Python 3.x installed
 2. Install the required dependencies:
 
-```bash
-pip install -r requirements.txt
-```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 ## Usage
 
+To use the session recorder:
+
 1. Navigate to the Recording_Session directory:
 
-```bash
-cd Recording_Session
-```
+   ```bash
+   cd Recording_Session
+   ```
 
 2. Run the session recorder:
 
-```bash
-python session_recorder.py
-```
+   ```bash
+   python session_recorder.py
+   ```
 
 3. When the application starts:
    - A dialog will appear indicating the session has started
