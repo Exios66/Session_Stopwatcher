@@ -400,7 +400,9 @@ class SessionRecorder:
         
         # Start the keyboard listener in a separate thread
         try:
+            # Create and start the listener
             self.listener = keyboard.Listener(on_press=self.on_key_press)
+            self.listener.daemon = True  # Make it a daemon thread
             self.listener.start()
             logger.debug("Keyboard listener started")
         except Exception as e:
@@ -430,6 +432,12 @@ class SessionRecorder:
         self.recording = False
         self.timer_running = False
         
+        # Stop the keyboard listener
+        if self.listener and self.listener.is_alive():
+            logger.debug("Stopping keyboard listener")
+            self.listener.stop()
+            self.listener = None
+        
         # Update status window
         self.status_label.config(text="Session Ended", foreground="blue")
         
@@ -451,7 +459,7 @@ class SessionRecorder:
         else:
             messagebox.showinfo("Session Ended", "Session ended. No data to save.")
             logger.info("Session ended with no data to save")
-            
+        
         # Close the tkinter window
         self.root.quit()
         
@@ -505,6 +513,12 @@ class SessionRecorder:
             else:
                 # User canceled, don't close
                 return
+        else:
+            # Stop the keyboard listener if it's still running
+            if self.listener and self.listener.is_alive():
+                logger.debug("Stopping keyboard listener on window close")
+                self.listener.stop()
+                self.listener = None
         
         # No recording in progress, just close
         logger.info("Application closed by user")
