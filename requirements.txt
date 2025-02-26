@@ -1,0 +1,2 @@
+# Requirements for Manifest Generator
+# No external packages required - uses only standard library 
