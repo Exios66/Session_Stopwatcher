@@ -1,0 +1,25 @@
+{
+    "date": "2025-02-26",
+    "current_time": "03:25",
+    "participant_id": "000",
+    "participant_initials": "JB",
+    "assigned_subject_knowledge": "1",
+    "methods_of_analysis": 1,
+    "recruitment_form_completed": true,
+    "participant_gender": "male",
+    "subject_knowledge_topics": [
+        1,
+        5
+    ],
+    "behavioral_profiles": [
+        1,
+        5
+    ],
+    "screen_resolution": "1920x1080",
+    "screen_distance": "100",
+    "sampling_rate": "30",
+    "additional_notes": "n/a",
+    "audio_recording": "none",
+    "generated_at": "2025-02-26T03:25:23.199139",
+    "generator_version": "1.1.0"
+}
