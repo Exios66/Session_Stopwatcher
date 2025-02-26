@@ -50,7 +50,7 @@ The Manifest Generator creates JSON files with a specific structure containing p
 
 ## Data Validation Rules
 
-1. **Date and Time**: 
+1. **Date and Time**:
    - Date must follow YYYY-MM-DD format
    - Time must follow HH:MM format (24-hour)
 
@@ -91,4 +91,4 @@ The Manifest Generator creates JSON files with a specific structure containing p
 - The schema may evolve in future versions
 - Any changes to the schema should be reflected in the version number
 - All string fields have no explicit length limits
-- Fields containing numbers as strings (e.g., "250 Hz") allow for units to be included 
+- Fields containing numbers as strings (e.g., "250 Hz") allow for units to be included

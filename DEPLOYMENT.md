@@ -29,6 +29,7 @@ The executable will be created in the `dist` directory and can be distributed to
 For automated data collection, set up scheduled runs using cron (Linux/Mac) or Task Scheduler (Windows):
 
 **Linux/Mac (cron):**
+
 ```bash
 # Edit crontab
 crontab -e
@@ -38,6 +39,7 @@ crontab -e
 ```
 
 **Windows (Task Scheduler):**
+
 1. Open Task Scheduler
 2. Create a new Basic Task
 3. Set the trigger (daily, weekly, etc.)
@@ -118,12 +120,14 @@ backup_path = Path.cwd() / f"backup_data_{datetime.datetime.now().strftime('%Y%m
 ### Data Security
 
 1. **File Permissions**: Ensure the script and log files have appropriate permissions
+
    ```bash
    chmod 700 manifest.py
    chmod 600 manifest_generator.log
    ```
 
 2. **Data Encryption**: For sensitive participant data, consider encrypting the JSON output:
+
    ```python
    # Add encryption before writing to file (requires additional packages)
    from cryptography.fernet import Fernet
@@ -149,4 +153,4 @@ Provide users with:
 1. Basic operation guide
 2. List of required information to have ready before running
 3. Contact information for support
-4. Examples of valid inputs for each prompt 
+4. Examples of valid inputs for each prompt

@@ -1,0 +1,3 @@
+# Requirements for Session Recorder
+pynput>=1.7.6      # For keyboard event listening
+tkinter            # For GUI dialogs (included in standard Python installation) 
